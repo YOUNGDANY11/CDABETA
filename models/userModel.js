@@ -1,12 +1,12 @@
 const pool = require('../config/db')
 
-const getAllUsers = async () => {
+const getAll = async () => {
     const result = await pool.query('SELECT * FROM users')
     return result.rows
 }
 
-const getUserById = async (id) => {
-    const result = await pool.query('SELECT * FROM users WHERE id = $1', [id])
+const getUserById = async (id_user) => {
+    const result = await pool.query('SELECT * FROM users WHERE id_user = $1', [id_user])
     return result.rows[0]
 }
 
@@ -30,6 +30,10 @@ const getByDocument = async (document) => {
     return result.rows
 }
 
+const getByDocumentExact = async (document) => {
+    const result = await pool.query('SELECT * FROM users WHERE document = $1', [document])
+    return result.rows[0]
+}
 const getByPhone = async (phone) => {
     const result = await pool.query('SELECT * FROM users WHERE phone ILIKE $1', [`%${phone}%`])
     return result.rows
@@ -48,9 +52,17 @@ const create = async(id_role,name,lastname,email,hashedPassword,document,address
     return result.rows[0]
 }
 
+const updateByUserActive = async(name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,id_user) => {
+    const result = await pool.query(
+        'UPDATE users SET name = $1, lastname = $2, email = $3, document = $4, address = $5, country = $6, city = $7, phone = $8, contact_name = $9, contact_phone = $10, updated_at = NOW() WHERE id_user = $11 RETURNING *',
+        [name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,id_user]
+    )
+    return result.rows[0]
+}
+
 const update = async(id_role,name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,id_user) => {
     const result = await pool.query(
-        'UPDATE users SET id_role = $1, name = $2, lastname = $3, email = $4, document = $5, address = $6, country = $7, city = $8, phone = $9, contact_name = $10, contact_phone = $11 WHERE id_user = $12 RETURNING *',
+        'UPDATE users SET id_role = $1, name = $2, lastname = $3, email = $4, document = $5, address = $6, country = $7, city = $8, phone = $9, contact_name = $10, contact_phone = $11, updated_at = NOW() WHERE id_user = $12 RETURNING *',
         [id_role,name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,id_user]
     )
     return result.rows[0]
@@ -67,15 +79,17 @@ const deleteUser = async (id_user) => {
 }
 
 module.exports = {  
-    getAllUsers,
+    getAll,
     getUserById,
     getByName,
     getByLastname,
     getByEmail,
     getByDocument,
+    getByDocumentExact,
     getByPhone,
     registerUser,
     create,
+    updateByUserActive,
     update,
     updatePassword,
     deleteUser

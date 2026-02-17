@@ -5,7 +5,7 @@ const { generateNumericCode } = require('../utils/generateCodeResetPassword');
 const { renderTemplateFile } = require('../utils/renderTemplate');
 const userModel = require('../models/userModel');
 const passwordModel = require('../models/password.resetModel')
-const TTL_MINUTES = Number(process.env.RESET_CODE_TTL_MINUTES || 15);
+const TTL_MINUTES = Number(process.env.RESET_CODE_TTL_MINUTES || 3);
 
 const forgotPassword = async(req,res)=>{
     try{    
@@ -42,7 +42,7 @@ const forgotPassword = async(req,res)=>{
         })
         return res.status(200).json({
             mensaje:'Si el correo existe, se ha enviado un código de verificación para restablecer la contraseña.',
-            ttl_minutes: TTL_MINUTES
+            minutos: TTL_MINUTES
         })
     }catch(error){
         console.log(error)

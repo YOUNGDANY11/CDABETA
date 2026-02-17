@@ -18,8 +18,8 @@ const register = async(req,res)=>{
                 mensaje:'Correo en uso'
             })
         }
-        const existsDocument = await userModel.getByDocument(document)
-        if(existsDocument.length > 0){
+        const existsDocument = await userModel.getByDocumentExact(document)
+        if(existsDocument){
             return res.status(400).json({
                 status:'Error',
                 mensaje:'Documento en uso'
@@ -58,7 +58,7 @@ const login = async(req,res)=>{
                 mensaje:'Contraseña incorrecta'
             })
         }
-        const token = jwt.sign({id:existsUser[0].id}, process.env.JWT_SECRET, {expiresIn:'1h'})
+        const token = jwt.sign({id:existsUser[0].id_user, name:existsUser[0].name, lastname:existsUser[0].lastname,role:existsUser[0].id_role}, process.env.JWT_SECRET, {expiresIn:'1h'})
         return res.status(200).json({
             status:'Success',
             mensaje:'Login exitoso',

@@ -22,6 +22,28 @@ CREATE TABLE users(
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE temporal_clients(
+    id_temporal_client BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    lastname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    document VARCHAR(10) NOT NULL UNIQUE,
+    address VARCHAR(255) NOT NULL,
+    country VARCHAR(50) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    contact_name VARCHAR(100) NOT NULL,
+    contact_phone VARCHAR(20) NOT NULL,
+    license TEXT NOT NULL,
+    soat TEXT NOT NULL,
+    plate VARCHAR(10) NOT NULL UNIQUE,
+    brand VARCHAR(50) NOT NULL,
+    model VARCHAR(50) NOT NULL,
+    year INT NOT NULL,
+    color VARCHAR(20) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE password_resets (
     id_reset SERIAL PRIMARY KEY,
     id_user BIGINT NOT NULL REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -71,9 +93,10 @@ CREATE TABLE documents_vehicles(
 
 CREATE TABLE technomecanics(
     id_technomechanic BIGSERIAL PRIMARY KEY,
-    id_user BIGINT NOT NULL REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_user BIGINT REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_temporal_client BIGINT REFERENCES temporal_clients(id_temporal_client) ON DELETE CASCADE ON UPDATE CASCADE,
     id_mechanic BIGINT NOT NULL REFERENCES mechanics(id_mechanic) ON DELETE CASCADE ON UPDATE CASCADE,
-    id_vehicle BIGINT NOT NULL REFERENCES vehicles(id_vehicle) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_vehicle BIGINT REFERENCES vehicles(id_vehicle) ON DELETE CASCADE ON UPDATE CASCADE,
     documents_vehicle BIGINT NOT NULL REFERENCES documents_vehicles(id_document_vehicle) ON DELETE CASCADE ON UPDATE CASCADE, 
     description VARCHAR(255) NOT NULL,
     last_service_date DATE NOT NULL,
