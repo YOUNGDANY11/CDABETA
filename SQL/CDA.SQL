@@ -26,22 +26,31 @@ CREATE TABLE temporal_clients(
     id_temporal_client BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     lastname VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    document VARCHAR(10) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL,
+    document VARCHAR(10) NOT NULL,
     address VARCHAR(255) NOT NULL,
     country VARCHAR(50) NOT NULL,
     city VARCHAR(50) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     contact_name VARCHAR(100) NOT NULL,
     contact_phone VARCHAR(20) NOT NULL,
-    license TEXT NOT NULL,
-    soat TEXT NOT NULL,
+    license TEXT,
+    soat TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE vehicles_temporal_clients(
+    id_vehicle_temporal_client BIGSERIAL PRIMARY KEY,
+    id_temporal_client BIGINT NOT NULL REFERENCES temporal_clients(id_temporal_client) ON DELETE CASCADE ON UPDATE CASCADE,
     plate VARCHAR(10) NOT NULL UNIQUE,
     brand VARCHAR(50) NOT NULL,
     model VARCHAR(50) NOT NULL,
     year INT NOT NULL,
     color VARCHAR(20) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    tipe VARCHAR(50) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE password_resets (
@@ -65,12 +74,16 @@ CREATE TABLE mechanics(
 
 CREATE TABLE vehicles(
     id_vehicle BIGSERIAL PRIMARY KEY,
+    id_user BIGINT NOT NULL REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE,
+    name VARCHAR(100) NOT NULL,
     plate VARCHAR(10) NOT NULL UNIQUE,
     brand VARCHAR(50) NOT NULL,
     model VARCHAR(50) NOT NULL,
     year INT NOT NULL,
     color VARCHAR(20) NOT NULL,
-    id_user BIGINT NOT NULL REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE
+    tipe VARCHAR(50) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE documents_users(

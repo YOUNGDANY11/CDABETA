@@ -74,7 +74,23 @@ const documentUpload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }
 })
 
+const uploadImageOrDocument = (fieldName) => (req, res, next) => {
+  return documentUpload.single(fieldName)(req, res, (docErr) => {
+    if (!docErr) {
+      return next()
+    }
+
+    return imageUpload.single(fieldName)(req, res, (imgErr) => {
+      if (imgErr) {
+        return next(imgErr)
+      }
+      return next()
+    })
+  })
+}
+
 module.exports = {
   imageUpload,
-  documentUpload
+  documentUpload,
+  uploadImageOrDocument
 }

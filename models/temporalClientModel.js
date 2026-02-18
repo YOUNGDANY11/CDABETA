@@ -25,6 +25,11 @@ const getByEmail = async(email)=>{
     return result.rows
 }
 
+const getByEmailExact = async(email)=>{
+    const result = await pool.query('SELECT * FROM temporal_clients WHERE email = $1', [email])
+    return result.rows[0]
+}
+
 const getByDocument = async(document)=>{
     const result = await pool.query('SELECT * FROM temporal_clients WHERE document ILIKE $1', [`%${document}%`])
     return result.rows
@@ -40,15 +45,10 @@ const getByPhone = async(phone)=>{
     return result.rows
 }
 
-const getByPlate = async(plate)=>{
-    const result = await pool.query('SELECT * FROM temporal_clients WHERE plate ILIKE $1', [`%${plate}%`])
-    return result.rows
-}
-
-const create = async(name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,plate,brand,model,year,color) => {
+const create = async(name,lastname,email,document,address,country,city,phone,contact_name,contact_phone) => {
     const result = await pool.query(
-        'INSERT INTO temporal_clients (name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,plate,brand,model,year,color) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *',
-        [name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,plate,brand,model,year,color]
+        'INSERT INTO temporal_clients (name,lastname,email,document,address,country,city,phone,contact_name,contact_phone) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *',
+        [name,lastname,email,document,address,country,city,phone,contact_name,contact_phone]
     )
     return result.rows[0]
 }
@@ -67,4 +67,32 @@ const updateSoat = async(soat,id_temporal_client) => {
         [soat,id_temporal_client]
     )
     return result.rows[0]
+}
+
+const update = async(name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,id_temporal_client) => {
+    const result = await pool.query('UPDATE temporal_clients SET name = $1,lastname = $2,email = $3,document = $4,address = $5,country = $6,city = $7,phone = $8,contact_name = $9,contact_phone = $10, updated_at = NOW() WHERE id_temporal_client = $11 RETURNING *',
+    [name,lastname,email,document,address,country,city,phone,contact_name,contact_phone,id_temporal_client])
+    return result.rows[0]
+}
+
+const deleteTemporalClient = async(id_temporal_client) => {
+    const result = await pool.query('DELETE FROM temporal_clients WHERE id_temporal_client = $1 RETURNING *', [id_temporal_client])
+    return result.rows[0]
+}
+
+module.exports = {
+    getAll,
+    getById,
+    getByName,
+    getByLastName,
+    getByEmail,
+    getByEmailExact,
+    getByDocument,
+    getByDocumentExact,
+    getByPhone,
+    create,
+    updateLicense,
+    updateSoat,
+    update,
+    deleteTemporalClient
 }
