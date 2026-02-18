@@ -26,7 +26,7 @@ const register = async(req,res)=>{
             })
         }
         const hashedPassword = await bcrypt.hash(password, 10)
-        const user = await userModel.registerUser(3,email, hashedPassword,document)
+        const user = await userModel.registerUser(email, hashedPassword,document)
         return res.status(201).json({
             status:'Success',
             mensaje:'Registro exitoso',

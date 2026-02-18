@@ -6,7 +6,7 @@ CREATE TABLE roles(
 
 CREATE TABLE users(
     id_user BIGSERIAL PRIMARY KEY,
-    id_role INT NOT NULL REFERENCES roles(id_role) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_role INT NOT NULL DEFAULT 4 REFERENCES roles(id_role) ON DELETE CASCADE ON UPDATE CASCADE,
     name VARCHAR(100),
     lastname VARCHAR(100),
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -43,6 +43,7 @@ CREATE TABLE temporal_clients(
 CREATE TABLE vehicles_temporal_clients(
     id_vehicle_temporal_client BIGSERIAL PRIMARY KEY,
     id_temporal_client BIGINT NOT NULL REFERENCES temporal_clients(id_temporal_client) ON DELETE CASCADE ON UPDATE CASCADE,
+    name VARCHAR(100) NOT NULL,
     plate VARCHAR(10) NOT NULL UNIQUE,
     brand VARCHAR(50) NOT NULL,
     model VARCHAR(50) NOT NULL,
@@ -50,7 +51,7 @@ CREATE TABLE vehicles_temporal_clients(
     color VARCHAR(20) NOT NULL,
     tipe VARCHAR(50) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE password_resets (
@@ -181,5 +182,6 @@ CREATE TABLE contract_documents(
 
 INSERT INTO roles (name, code) VALUES 
 ('Admin', 'ADMIN'),
-('User', 'USER'),
-('Mechanic', 'Mecanico');
+('Manager', 'Gestor'),
+('Mechanic', 'Mecanico'),
+('User', 'USER');

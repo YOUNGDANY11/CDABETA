@@ -39,8 +39,8 @@ const getByPhone = async (phone) => {
     return result.rows
 }
 
-const registerUser = async(id_role,email,password,document)=>{
-    const result = await pool.query('INSERT INTO users (id_role,email,password,document) VALUES ($1,$2,$3,$4) RETURNING *', [id_role,email,password,document])
+const registerUser = async(email,password,document)=>{
+    const result = await pool.query('INSERT INTO users (email,password,document) VALUES ($1,$2,$3) RETURNING *', [email,password,document])
     return result.rows[0]
 }
 

@@ -21,7 +21,7 @@ router.delete('/id/:id', auth, role(1), userController.deleteUser)
 
 
 //Usuarios clientes
-router.get('/active', auth, role(1,2,3),userController.getByUserActive)
-router.put('/active', auth, role(1,2,3), userController.updateByUserActive)
+router.get('/active', auth, role(1,2,3,4),userController.getByUserActive)
+router.put('/active', auth, role(1,2,3,4), userController.updateByUserActive)
 
 module.exports = router
