@@ -1,11 +1,11 @@
-const bcrypt = require('bcryptjs');
-const path = require('path');
-const { getEmailTransporter } = require('../config/email.config');
-const { generateNumericCode } = require('../utils/generateCodeResetPassword');
-const { renderTemplateFile } = require('../utils/renderTemplate');
-const userModel = require('../models/userModel');
+const bcrypt = require('bcryptjs')
+const path = require('path')
+const { getEmailTransporter } = require('../config/email.config')
+const { generateNumericCode } = require('../utils/generateCodeResetPassword')
+const { renderTemplateFile } = require('../utils/renderTemplate')
+const userModel = require('../models/userModel')
 const passwordModel = require('../models/password.resetModel')
-const TTL_MINUTES = Number(process.env.RESET_CODE_TTL_MINUTES || 3);
+const TTL_MINUTES = Number(process.env.RESET_CODE_TTL_MINUTES || 3)
 
 const forgotPassword = async(req,res)=>{
     try{    
@@ -23,15 +23,15 @@ const forgotPassword = async(req,res)=>{
         await passwordModel.createReset(user[0].id_user, code_hash, expires_at)
         const transporter = getEmailTransporter()
 
-        const templatePath = path.join(__dirname, '..', 'templates', 'emails', 'password-reset.email.html');
-        const supportEmail = process.env.SUPPORT_EMAIL || process.env.GMAIL_USER || '';
+        const templatePath = path.join(__dirname, '..', 'templates', 'emails', 'password-reset.email.html')
+        const supportEmail = process.env.SUPPORT_EMAIL || process.env.GMAIL_USER || ''
         const html = await renderTemplateFile(templatePath, {
             APP_NAME: process.env.APP_NAME || 'CDA',
             CODE: code,
             TTL_MINUTES: TTL_MINUTES,
             SUPPORT_EMAIL: supportEmail,
             YEAR: new Date().getFullYear(),
-        });
+        })
 
         await transporter.sendMail({
             from: `"CDA" <${process.env.GMAIL_USER}>`,
