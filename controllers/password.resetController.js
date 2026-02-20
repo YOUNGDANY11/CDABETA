@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const path = require('path')
-const { getEmailTransporter } = require('../config/email.config')
+const { sendEmail } = require('../config/email.config')
 const { generateNumericCode } = require('../utils/generateCodeResetPassword')
 const { renderTemplateFile } = require('../utils/renderTemplate')
 const userModel = require('../models/userModel')
@@ -21,7 +21,6 @@ const forgotPassword = async(req,res)=>{
         const code_hash = await bcrypt.hash(code, 10)
         const expires_at = new Date(Date.now() + TTL_MINUTES * 60 * 1000)
         await passwordModel.createReset(user[0].id_user, code_hash, expires_at)
-        const transporter = getEmailTransporter()
 
         const templatePath = path.join(__dirname, '..', 'templates', 'emails', 'password-reset.email.html')
         const supportEmail = process.env.SUPPORT_EMAIL || process.env.GMAIL_USER || ''
@@ -33,7 +32,7 @@ const forgotPassword = async(req,res)=>{
             YEAR: new Date().getFullYear(),
         })
 
-        await transporter.sendMail({
+        await sendEmail({
             from: `"CDA" <${process.env.GMAIL_USER}>`,
             to: email,
             subject: 'Código para restablecer tu contraseña',

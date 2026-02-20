@@ -9,6 +9,9 @@ const passwordResetRoutes = require('./routes/password.resetRoutes')
 const userRoutes = require('./routes/userRoutes')
 const temporalClientsRoutes = require('./routes/temporalclientsRoutes')
 const vehicleTemporalClientRoutes = require('./routes/vehicleTemporalClientRoutes')
+const technomecanicRoutes = require('./routes/technomecanicRoutes')
+const { warmupEmailTransporter } = require('./config/email.config')
+
 
 const app = express()
 const PORT = process.env.PORT 
@@ -23,7 +26,10 @@ app.use('/api/password', passwordResetRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/temporal-clients', temporalClientsRoutes)
 app.use('/api/vehicle-temporal-clients', vehicleTemporalClientRoutes)
+app.use('/api/technomecanics', technomecanicRoutes)
+
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`)
+    warmupEmailTransporter()
 })

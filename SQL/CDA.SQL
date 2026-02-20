@@ -111,8 +111,8 @@ CREATE TABLE technomecanics(
     id_temporal_client BIGINT REFERENCES temporal_clients(id_temporal_client) ON DELETE CASCADE ON UPDATE CASCADE,
     id_mechanic BIGINT NOT NULL REFERENCES mechanics(id_mechanic) ON DELETE CASCADE ON UPDATE CASCADE,
     id_vehicle BIGINT REFERENCES vehicles(id_vehicle) ON DELETE CASCADE ON UPDATE CASCADE,
-    documents_vehicle BIGINT NOT NULL REFERENCES documents_vehicles(id_document_vehicle) ON DELETE CASCADE ON UPDATE CASCADE, 
-    description VARCHAR(255) NOT NULL,
+    documents_vehicle BIGINT REFERENCES documents_vehicles(id_document_vehicle) ON DELETE CASCADE ON UPDATE CASCADE, 
+    description TEXT NOT NULL,
     last_service_date DATE NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

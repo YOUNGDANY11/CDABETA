@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 
 let transporter;
+let verifyPromise;
 
 function getEmailTransporter() {
   if (transporter) return transporter;
@@ -9,23 +10,56 @@ function getEmailTransporter() {
     throw new Error('Faltan GMAIL_USER o GMAIL_APP_PASSWORD en variables de entorno');
   }
 
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = Number(process.env.SMTP_PORT || 465);
+  const secure = String(process.env.SMTP_SECURE || 'true').toLowerCase() === 'true';
+
   transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host,
+    port,
+    secure,
+    pool: true,
+    maxConnections: Number(process.env.SMTP_MAX_CONNECTIONS || 5),
+    maxMessages: Number(process.env.SMTP_MAX_MESSAGES || 200),
+    connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT || 8000),
+    greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT || 8000),
+    socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT || 12000),
+    dnsTimeout: Number(process.env.SMTP_DNS_TIMEOUT || 5000),
+    family: 4,
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_APP_PASSWORD,
     },
-  });
-
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error('Error verificando SMTP:', error);
-    } else {
-      console.log('SMTP listo para enviar correos');
-    }
+    tls: {
+      servername: host,
+      rejectUnauthorized: true,
+    },
   });
 
   return transporter;
 }
 
-module.exports = { getEmailTransporter };
+function warmupEmailTransporter() {
+  const smtp = getEmailTransporter();
+  if (!verifyPromise) {
+    verifyPromise = smtp.verify()
+      .then(() => {
+        console.log('SMTP listo para enviar correos');
+      })
+      .catch((error) => {
+        console.error('Error verificando SMTP:', error.message || error);
+      });
+  }
+  return verifyPromise;
+}
+
+async function sendEmail(mailOptions) {
+  const smtp = getEmailTransporter();
+  const startedAt = Date.now();
+  const info = await smtp.sendMail(mailOptions);
+  const durationMs = Date.now() - startedAt;
+  console.log(`[EMAIL] to=${mailOptions.to} status=accepted time=${durationMs}ms messageId=${info.messageId}`);
+  return info;
+}
+
+module.exports = { getEmailTransporter, warmupEmailTransporter, sendEmail };

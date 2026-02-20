@@ -1,7 +1,7 @@
 const userModel = require('../models/userModel')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const { getEmailTransporter } = require('../config/email.config')
+const { sendEmail } = require('../config/email.config')
 
 
 const register = async(req,res)=>{
@@ -29,8 +29,7 @@ const register = async(req,res)=>{
         }
         const hashedPassword = await bcrypt.hash(password, 10)
         const user = await userModel.registerUser(email, hashedPassword,document)
-        const transporter = getEmailTransporter()
-        await transporter.sendMail({
+        await sendEmail({
             from: `"Soporte" <${process.env.GMAIL_USER}>`,
             to: email,
             subject: 'Tu registro ha sido exitoso',
